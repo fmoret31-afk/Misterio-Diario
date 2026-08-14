@@ -1,0 +1,1067 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>🕵️ Misterio Diario — Caso #001</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0b0e14;
+            color: #e2e8f0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 12px;
+            margin: 0;
+        }
+        #app {
+            max-width: 480px;
+            width: 100%;
+            background: #1a1f2b;
+            border-radius: 28px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.8);
+            overflow: hidden;
+            border: 1px solid #2d3748;
+            position: relative;
+        }
+
+        /* HEADER */
+        .header {
+            background: linear-gradient(135deg, #1e293b, #0f172a);
+            padding: 14px 18px 12px;
+            border-bottom: 2px solid #334155;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+        .header .brand {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 18px;
+            font-weight: 700;
+            color: #facc15;
+        }
+        .header .brand span {
+            font-size: 13px;
+            font-weight: 400;
+            color: #94a3b8;
+        }
+        .header .stats {
+            display: flex;
+            gap: 12px;
+            font-size: 12px;
+            background: #0f172a;
+            padding: 4px 12px;
+            border-radius: 30px;
+            border: 1px solid #2d3748;
+        }
+        .header .stats div {
+            display: flex;
+            align-items: center;
+            gap: 3px;
+        }
+        .header .stats .num {
+            color: #facc15;
+            font-weight: 700;
+            min-width: 20px;
+        }
+
+        /* PANTALLAS */
+        .screen {
+            display: none;
+            padding: 18px 20px 24px;
+            animation: fadeIn 0.3s ease;
+        }
+        .screen.active {
+            display: block;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* BOTONES */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            background: #2d3748;
+            color: #e2e8f0;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 14px;
+            font-weight: 600;
+            font-size: 15px;
+            cursor: pointer;
+            transition: 0.2s;
+            width: 100%;
+            text-align: center;
+        }
+        .btn:hover {
+            background: #3d4a5f;
+            transform: scale(1.01);
+        }
+        .btn-primary {
+            background: #facc15;
+            color: #0f172a;
+        }
+        .btn-primary:hover {
+            background: #eab308;
+        }
+        .btn-success {
+            background: #16a34a;
+            color: white;
+        }
+        .btn-success:hover {
+            background: #15803d;
+        }
+        .btn-danger {
+            background: #dc2626;
+            color: white;
+        }
+        .btn-danger:hover {
+            background: #b91c1c;
+        }
+        .btn-outline {
+            background: transparent;
+            border: 1px solid #4b5563;
+        }
+        .btn-outline:hover {
+            background: #2d3748;
+        }
+        .btn-sm {
+            padding: 6px 14px;
+            font-size: 12px;
+            border-radius: 10px;
+            width: auto;
+        }
+
+        /* INICIO */
+        .intro {
+            text-align: center;
+        }
+        .intro .logo {
+            font-size: 64px;
+            margin-bottom: 6px;
+        }
+        .intro h2 {
+            font-size: 26px;
+            color: #facc15;
+        }
+        .intro .sub {
+            color: #94a3b8;
+            font-size: 14px;
+            margin: 4px 0 16px;
+        }
+        .intro .case-badge {
+            background: #2d3748;
+            padding: 4px 18px;
+            border-radius: 30px;
+            display: inline-block;
+            font-size: 12px;
+            font-weight: 600;
+            color: #94a3b8;
+            margin-bottom: 16px;
+        }
+        .intro .rules {
+            background: #0f172a;
+            border-radius: 16px;
+            padding: 16px 18px;
+            margin: 14px 0;
+            text-align: left;
+            font-size: 13px;
+            line-height: 1.7;
+            color: #cbd5e1;
+            border: 1px solid #2d3748;
+        }
+        .intro .rules li {
+            list-style: none;
+            padding: 3px 0;
+        }
+        .intro .rules li::before {
+            content: "🕵️ ";
+        }
+
+        /* HISTORIA */
+        .story {
+            font-size: 15px;
+            line-height: 1.7;
+            background: #0f172a;
+            border-radius: 16px;
+            padding: 16px 18px;
+            border-left: 4px solid #facc15;
+            margin-bottom: 16px;
+            color: #e2e8f0;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .story p {
+            margin-bottom: 8px;
+        }
+        .story p:last-child {
+            margin-bottom: 0;
+        }
+
+        /* TARJETAS */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin: 10px 0;
+        }
+        .grid-3 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 8px;
+            margin: 10px 0;
+        }
+        .card {
+            background: #0f172a;
+            border: 1px solid #2d3748;
+            border-radius: 14px;
+            padding: 12px 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.2s;
+            font-size: 12.5px;
+            font-weight: 500;
+        }
+        .card:hover {
+            background: #1e293b;
+            border-color: #4b5563;
+            transform: translateY(-2px);
+        }
+        .card .icon {
+            font-size: 26px;
+            display: block;
+            margin-bottom: 4px;
+        }
+        .card .label {
+            font-size: 11px;
+            color: #94a3b8;
+            font-weight: 400;
+        }
+        .card .badge {
+            background: #facc15;
+            color: #0f172a;
+            font-size: 9px;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 30px;
+            display: inline-block;
+            margin-top: 4px;
+        }
+        .card.investigated {
+            border-color: #16a34a;
+            background: #0a2a1a;
+        }
+        .card.investigated .badge {
+            background: #16a34a;
+            color: white;
+        }
+        .card.disabled {
+            opacity: 0.4;
+            pointer-events: none;
+            filter: grayscale(0.6);
+        }
+
+        /* PISTAS */
+        .pistas-lista {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin: 10px 0;
+            min-height: 36px;
+        }
+        .pista-item {
+            background: #1e293b;
+            border: 1px solid #2d3748;
+            border-radius: 30px;
+            padding: 3px 12px 3px 8px;
+            font-size: 12px;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .pista-item .emoji {
+            font-size: 14px;
+        }
+        .pista-item.falsa {
+            opacity: 0.5;
+            text-decoration: line-through;
+            border-color: #7f1d1d;
+        }
+
+        /* DIÁLOGO INTERROGATORIO */
+        .dialogo {
+            background: #0f172a;
+            border-radius: 14px;
+            padding: 14px;
+            margin: 10px 0;
+            border: 1px solid #2d3748;
+            max-height: 180px;
+            overflow-y: auto;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        .dialogo .msg {
+            padding: 6px 0;
+            border-bottom: 1px solid #1e293b;
+        }
+        .dialogo .msg:last-child {
+            border-bottom: none;
+        }
+        .dialogo .msg .quien {
+            font-weight: 700;
+            color: #facc15;
+        }
+
+        /* RESULTADO */
+        .resultado-box {
+            background: #0f172a;
+            border-radius: 20px;
+            padding: 24px 20px;
+            text-align: center;
+            border: 2px solid #2d3748;
+        }
+        .resultado-box .big {
+            font-size: 52px;
+        }
+        .resultado-box .puntaje {
+            font-size: 32px;
+            font-weight: 700;
+            color: #facc15;
+        }
+        .resultado-box .detalle {
+            font-size: 14px;
+            color: #94a3b8;
+            margin: 8px 0;
+        }
+        .resultado-box .share-row {
+            display: flex;
+            gap: 10px;
+            margin-top: 16px;
+            flex-wrap: wrap;
+        }
+        .resultado-box .share-row .btn {
+            flex: 1;
+            min-width: 100px;
+        }
+
+        /* RANKING */
+        .ranking-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+            margin-top: 10px;
+        }
+        .ranking-table th {
+            background: #1e293b;
+            padding: 8px;
+            text-align: left;
+            border-bottom: 2px solid #334155;
+            color: #94a3b8;
+            font-weight: 600;
+        }
+        .ranking-table td {
+            padding: 8px;
+            border-bottom: 1px solid #1e293b;
+        }
+        .ranking-table .medal {
+            font-size: 18px;
+        }
+
+        .section-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 14px 0 6px;
+            font-weight: 600;
+            font-size: 14px;
+            color: #94a3b8;
+        }
+        .section-title .count {
+            font-size: 12px;
+            color: #64748b;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #0f172a;
+            border: 1px solid #facc15;
+            color: #facc15;
+            padding: 12px 24px;
+            border-radius: 16px;
+            font-weight: 600;
+            font-size: 14px;
+            z-index: 999;
+            max-width: 90%;
+            text-align: center;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.6);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+        .toast.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        /* SCROLL */
+        .scrollable {
+            max-height: 180px;
+            overflow-y: auto;
+            padding-right: 4px;
+        }
+        .scrollable::-webkit-scrollbar {
+            width: 4px;
+        }
+        .scrollable::-webkit-scrollbar-thumb {
+            background: #4b5563;
+            border-radius: 4px;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 450px) {
+            .grid-2 { grid-template-columns: 1fr 1fr; gap: 8px; }
+            .grid-3 { grid-template-columns: 1fr 1fr 1fr; gap: 6px; }
+            .header .brand { font-size: 16px; }
+            .header .stats { font-size: 11px; gap: 8px; padding: 3px 10px; }
+            .card .icon { font-size: 22px; }
+            .card { font-size: 11.5px; padding: 10px 6px; }
+            .story { font-size: 14px; }
+            .intro .logo { font-size: 48px; }
+        }
+        @media (max-width: 380px) {
+            .grid-2 { grid-template-columns: 1fr 1fr; gap: 6px; }
+            .grid-3 { grid-template-columns: 1fr 1fr; }
+            .resultado-box .share-row { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="app">
+        <!-- HEADER -->
+        <div class="header">
+            <div class="brand">
+                🕵️ Misterio <span>Diario</span>
+            </div>
+            <div class="stats">
+                <div>⏱️ <span class="num" id="timerDisplay">00:00</span></div>
+                <div>⭐ <span class="num" id="puntosDisplay">0</span></div>
+                <div>🔍 <span class="num" id="pistasDisplay">0</span></div>
+            </div>
+        </div>
+
+        <!-- PANTALLA INICIO -->
+        <div class="screen active" id="screenInicio">
+            <div class="intro">
+                <div class="logo">🕵️</div>
+                <h2>Misterio Diario</h2>
+                <div class="sub">Caso #001 — La habitación 314</div>
+                <div class="case-badge">🔒 Resuelve el misterio</div>
+                <div class="rules">
+                    <li>Investiga la escena (5 lugares)</li>
+                    <li>Interroga a los 4 sospechosos</li>
+                    <li>Encuentra pistas verdaderas y evita falsas</li>
+                    <li>Tienes 8 acciones y 10 minutos</li>
+                    <li>Resuelve y comparte tu puntuación</li>
+                </div>
+                <button class="btn btn-primary" onclick="iniciarJuego()">🔍 Comenzar investigación</button>
+            </div>
+        </div>
+
+        <!-- PANTALLA JUEGO -->
+        <div class="screen" id="screenJuego">
+            <div class="story" id="historia">
+                <p><strong>🏨 Hotel Windsor — 3:47 AM</strong></p>
+                <p>El empresario <strong>Víctor Rivas</strong> desapareció de su habitación 314. La puerta estaba cerrada por dentro, pero él no está. ¿Fue secuestrado? ¿Escapó? ¿O alguien lo ayudó?</p>
+                <p>Tienes 10 minutos para investigar.</p>
+            </div>
+
+            <!-- LUGARES -->
+            <div class="section-title">
+                <span>📌 Investigar</span>
+                <span class="count" id="accionesRestantes">Acciones: 8</span>
+            </div>
+            <div class="grid-3" id="lugaresGrid">
+                <div class="card" data-lugar="escritorio" onclick="investigarLugar('escritorio')">
+                    <span class="icon">📝</span> Escritorio
+                    <span class="label">Revisar</span>
+                </div>
+                <div class="card" data-lugar="telefono" onclick="investigarLugar('telefono')">
+                    <span class="icon">📞</span> Teléfono
+                    <span class="label">Registro</span>
+                </div>
+                <div class="card" data-lugar="ventana" onclick="investigarLugar('ventana')">
+                    <span class="icon">🪟</span> Ventana
+                    <span class="label">Inspeccionar</span>
+                </div>
+                <div class="card" data-lugar="armario" onclick="investigarLugar('armario')">
+                    <span class="icon">🚪</span> Armario
+                    <span class="label">Abrir</span>
+                </div>
+                <div class="card" data-lugar="computadora" onclick="investigarLugar('computadora')">
+                    <span class="icon">💻</span> Computadora
+                    <span class="label">Revisar</span>
+                </div>
+                <div class="card" data-lugar="cama" onclick="investigarLugar('cama')">
+                    <span class="icon">🛏️</span> Cama
+                    <span class="label">Revisar</span>
+                </div>
+            </div>
+
+            <!-- SOSPECHOSOS -->
+            <div class="section-title">
+                <span>👥 Interrogar</span>
+            </div>
+            <div class="grid-2" id="sospechososGrid">
+                <div class="card" data-sospechoso="esposa" onclick="interrogar('esposa')">
+                    <span class="icon">👩</span> Esposa
+                    <span class="label">Lucía Rivas</span>
+                </div>
+                <div class="card" data-sospechoso="socio" onclick="interrogar('socio')">
+                    <span class="icon">👨‍💼</span> Socio
+                    <span class="label">Carlos Méndez</span>
+                </div>
+                <div class="card" data-sospechoso="guardaespaldas" onclick="interrogar('guardaespaldas')">
+                    <span class="icon">💂</span> Guardaespaldas
+                    <span class="label">Jorge Torres</span>
+                </div>
+                <div class="card" data-sospechoso="recepcionista" onclick="interrogar('recepcionista')">
+                    <span class="icon">🧑‍💼</span> Recepcionista
+                    <span class="label">María Prado</span>
+                </div>
+            </div>
+
+            <!-- PISTAS -->
+            <div class="section-title">
+                <span>🔎 Pistas</span>
+                <span class="count" id="pistasContador">0 / 10</span>
+            </div>
+            <div class="pistas-lista" id="pistasLista">
+                <span style="color:#64748b; font-size:12px;">Investiga para encontrar pistas...</span>
+            </div>
+
+            <!-- RESOLVER -->
+            <button class="btn btn-success" style="margin-top:16px;" onclick="mostrarResolver()">📋 Resolver el caso</button>
+        </div>
+
+        <!-- PANTALLA RESOLVER -->
+        <div class="screen" id="screenResolver">
+            <h3 style="color:#facc15; margin-bottom:12px;">📋 Resolver el caso</h3>
+            <p style="color:#94a3b8; font-size:14px; margin-bottom:14px;">Elige quién crees que es responsable.</p>
+            <div id="opcionesSospechosos" style="display:flex; flex-direction:column; gap:8px;"></div>
+            <div style="margin-top:12px;">
+                <label style="font-size:13px; color:#94a3b8;">Motivo (opcional):</label>
+                <input type="text" id="motivoInput" placeholder="Ej: Tenía la llave..." style="width:100%; padding:10px; border-radius:12px; border:1px solid #2d3748; background:#0f172a; color:#e2e8f0; font-size:14px; margin-top:4px;">
+            </div>
+            <div style="display:flex; gap:10px; margin-top:16px;">
+                <button class="btn btn-primary" onclick="resolverCaso()">✅ Resolver</button>
+                <button class="btn btn-outline" onclick="volverJuego()">⬅️ Volver</button>
+            </div>
+        </div>
+
+        <!-- PANTALLA RESULTADO -->
+        <div class="screen" id="screenResultado">
+            <div class="resultado-box">
+                <div class="big" id="resultadoIcono">🎉</div>
+                <div style="font-size:22px; font-weight:700; margin:6px 0;" id="resultadoTitulo">¡Caso resuelto!</div>
+                <div class="puntaje" id="resultadoPuntos">0</div>
+                <div class="detalle" id="resultadoDetalle">Excelente trabajo.</div>
+                <div style="margin:6px 0; font-size:13px; color:#94a3b8;" id="resultadoExtra"></div>
+
+                <!-- RANKING LOCAL -->
+                <div style="margin-top:16px; text-align:left;">
+                    <div style="font-weight:600; color:#94a3b8; font-size:13px; margin-bottom:6px;">🏆 Top detectives locales</div>
+                    <div id="rankingLocal" style="max-height:150px; overflow-y:auto;"></div>
+                </div>
+
+                <div class="share-row">
+                    <button class="btn btn-primary" onclick="compartirResultado()">📤 Compartir</button>
+                    <button class="btn btn-outline" onclick="reiniciarJuego()">🔄 Nuevo caso</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- TOAST -->
+        <div class="toast" id="toast"></div>
+    </div>
+
+    <script>
+        // ================================================================
+        // DATOS DEL CASO
+        // ================================================================
+        const CASO = {
+            titulo: "La habitación 314",
+            responsable: "socio",
+            nombreResponsable: "Carlos Méndez",
+            historia: "El empresario Víctor Rivas desapareció de su habitación 314. La puerta estaba cerrada por dentro, pero él no está. ¿Fue secuestrado? ¿Escapó? ¿O alguien lo ayudó?",
+            lugares: {
+                escritorio: {
+                    nombre: "Escritorio",
+                    descripcion: "Sobre el escritorio hay papeles desordenados, una agenda y un teléfono apagado.",
+                    pistas: [
+                        { texto: "Agenda abierta en la página del día del incidente", emoji: "📅", valida: true },
+                        { texto: "Un recibo de una llamada a Carlos Méndez a las 2:30 AM", emoji: "🧾", valida: true }
+                    ]
+                },
+                telefono: {
+                    nombre: "Teléfono",
+                    descripcion: "El teléfono de la habitación tiene el último número marcado: el socio.",
+                    pistas: [
+                        { texto: "Última llamada: Carlos Méndez, duración 4 minutos", emoji: "📞", valida: true }
+                    ]
+                },
+                ventana: {
+                    nombre: "Ventana",
+                    descripcion: "La ventana está cerrada, pero la cerradura está forzada desde fuera.",
+                    pistas: [
+                        { texto: "Marcas de herramientas en el marco de la ventana", emoji: "🔧", valida: false },
+                        { texto: "Huella de zapato en el alféizar (talla 42)", emoji: "👟", valida: true }
+                    ]
+                },
+                armario: {
+                    nombre: "Armario",
+                    descripcion: "El armario está vacío, pero hay una maleta abierta con ropa revuelta.",
+                    pistas: [
+                        { texto: "Maleta con documentos de negocios de Víctor", emoji: "📁", valida: false },
+                        { texto: "Un carnet de socio de Carlos Méndez en el bolsillo de un traje", emoji: "🪪", valida: true }
+                    ]
+                },
+                computadora: {
+                    nombre: "Computadora",
+                    descripcion: "La computadora está encendida, pantalla bloqueada.",
+                    pistas: [
+                        { texto: "Correo sin leer: 'Todo listo para el trato, Carlos'", emoji: "✉️", valida: true }
+                    ]
+                },
+                cama: {
+                    nombre: "Cama",
+                    descripcion: "La cama está deshecha, almohadas en el suelo.",
+                    pistas: [
+                        { texto: "Una nota manuscrita: 'Nos vemos en el garaje' sin firma", emoji: "📝", valida: false }
+                    ]
+                }
+            },
+            sospechosos: {
+                esposa: {
+                    nombre: "Lucía Rivas",
+                    relacion: "Esposa",
+                    dialogo: "Víctor y yo estábamos discutiendo por el divorcio. No sé dónde está, pero sé que él y Carlos tenían una reunión secreta.",
+                    pistas: [{ texto: "Discusión por divorcio y herencia", emoji: "💔", valida: false }]
+                },
+                socio: {
+                    nombre: "Carlos Méndez",
+                    relacion: "Socio de negocios",
+                    dialogo: "Víctor me debía dinero. Quedamos en vernos a las 3 AM, pero nunca llegó. Yo estaba en mi oficina.",
+                    pistas: [
+                        { texto: "Testimonio inconsistente: dice que estaba en la oficina, pero el registro de llamadas muestra que estaba cerca del hotel", emoji: "🗣️", valida: true },
+                        { texto: "Una llave de la habitación 314 en su bolsillo", emoji: "🔑", valida: true }
+                    ]
+                },
+                guardaespaldas: {
+                    nombre: "Jorge Torres",
+                    relacion: "Guardaespaldas",
+                    dialogo: "Yo estaba en la puerta toda la noche. No vi a nadie entrar ni salir. Pero escuché ruidos en la ventana.",
+                    pistas: [
+                        { texto: "Escuchó ruidos en la ventana a las 3 AM", emoji: "👂", valida: false }
+                    ]
+                },
+                recepcionista: {
+                    nombre: "María Prado",
+                    relacion: "Recepcionista",
+                    dialogo: "Carlos vino a las 2:30 AM a preguntar por Víctor. Le dije que no estaba, pero él insistió.",
+                    pistas: [
+                        { texto: "Carlos llegó al hotel a las 2:30 AM", emoji: "🕒", valida: true }
+                    ]
+                }
+            }
+        };
+
+        // ================================================================
+        // ESTADO DEL JUEGO
+        // ================================================================
+        let estado = {
+            iniciado: false,
+            tiempo: 0,
+            maxTiempo: 600,
+            timerInterval: null,
+            puntos: 0,
+            pistasEncontradas: [],
+            acciones: 8,
+            lugaresInvestigados: [],
+            sospechososInterrogados: [],
+            casoResuelto: false,
+            pistasValidas: 0,
+            pistasInvalidas: 0,
+            sospechosoElegido: null,
+            motivo: "",
+            juegoTerminado: false,
+            nombreJugador: "Detective"
+        };
+
+        // ================================================================
+        // FUNCIONES
+        // ================================================================
+        function iniciarJuego() {
+            document.getElementById('screenInicio').classList.remove('active');
+            document.getElementById('screenJuego').classList.add('active');
+            estado.iniciado = true;
+            estado.tiempo = 0;
+            estado.puntos = 0;
+            estado.pistasEncontradas = [];
+            estado.acciones = 8;
+            estado.lugaresInvestigados = [];
+            estado.sospechososInterrogados = [];
+            estado.casoResuelto = false;
+            estado.pistasValidas = 0;
+            estado.pistasInvalidas = 0;
+            estado.sospechosoElegido = null;
+            estado.motivo = "";
+            estado.juegoTerminado = false;
+
+            // Resetear UI
+            document.querySelectorAll('.card').forEach(c => {
+                c.classList.remove('investigated', 'disabled');
+            });
+            document.getElementById('pistasLista').innerHTML = `<span style="color:#64748b; font-size:12px;">Investiga para encontrar pistas...</span>`;
+            document.getElementById('historia').innerHTML = `
+                <p><strong>🏨 Hotel Windsor — 3:47 AM</strong></p>
+                <p>El empresario <strong>Víctor Rivas</strong> desapareció de su habitación 314. La puerta estaba cerrada por dentro, pero él no está. ¿Fue secuestrado? ¿Escapó? ¿O alguien lo ayudó?</p>
+                <p>Tienes 10 minutos para investigar.</p>
+            `;
+            actualizarContadores();
+
+            // Timer
+            if (estado.timerInterval) clearInterval(estado.timerInterval);
+            estado.timerInterval = setInterval(() => {
+                estado.tiempo++;
+                actualizarTimer();
+                if (estado.tiempo >= estado.maxTiempo) {
+                    clearInterval(estado.timerInterval);
+                    terminarJuego("⏰ Se acabó el tiempo. El caso queda sin resolver.");
+                }
+            }, 1000);
+
+            mostrarToast("🔍 ¡Comienza la investigación! Tienes 8 acciones.");
+        }
+
+        function actualizarTimer() {
+            const seg = estado.tiempo;
+            const min = Math.floor(seg / 60);
+            const sec = seg % 60;
+            document.getElementById('timerDisplay').textContent = `${String(min).padStart(2,'0')}:${String(sec).padStart(2,'0')}`;
+        }
+
+        function actualizarContadores() {
+            document.getElementById('puntosDisplay').textContent = estado.puntos;
+            document.getElementById('pistasDisplay').textContent = estado.pistasEncontradas.length;
+            document.getElementById('accionesRestantes').textContent = `Acciones: ${estado.acciones}`;
+            const totalPistas = Object.values(CASO.lugares).reduce((acc, l) => acc + l.pistas.length, 0) +
+                               Object.values(CASO.sospechosos).reduce((acc, s) => acc + (s.pistas ? s.pistas.length : 0), 0);
+            document.getElementById('pistasContador').textContent = `${estado.pistasEncontradas.length} / ${totalPistas}`;
+        }
+
+        function investigarLugar(lugarKey) {
+            if (estado.juegoTerminado) return;
+            if (estado.acciones <= 0) {
+                mostrarToast("⚠️ No te quedan acciones. Resuelve el caso.");
+                return;
+            }
+            if (estado.lugaresInvestigados.includes(lugarKey)) {
+                mostrarToast("Ya investigaste este lugar.");
+                return;
+            }
+
+            const lugar = CASO.lugares[lugarKey];
+            estado.lugaresInvestigados.push(lugarKey);
+            estado.acciones--;
+
+            agregarMensajeHistoria(`🔍 Investigaste ${lugar.nombre}: ${lugar.descripcion}`);
+
+            lugar.pistas.forEach(p => {
+                estado.pistasEncontradas.push({
+                    ...p,
+                    lugar: lugarKey,
+                    fuente: lugar.nombre
+                });
+                if (p.valida) estado.pistasValidas++;
+                else estado.pistasInvalidas++;
+            });
+
+            document.querySelector(`[data-lugar="${lugarKey}"]`)?.classList.add('investigated');
+            actualizarPistasUI();
+            actualizarContadores();
+
+            estado.puntos += 5;
+            actualizarContadores();
+
+            verificarPistasCompletas();
+
+            if (estado.acciones === 0) {
+                mostrarToast("⚠️ No te quedan acciones. Resuelve el caso ahora.");
+            }
+        }
+
+        function interrogar(sospechosoKey) {
+            if (estado.juegoTerminado) return;
+            if (estado.acciones <= 0) {
+                mostrarToast("⚠️ No te quedan acciones.");
+                return;
+            }
+            if (estado.sospechososInterrogados.includes(sospechosoKey)) {
+                mostrarToast("Ya interrogaste a esta persona.");
+                return;
+            }
+
+            const sospechoso = CASO.sospechosos[sospechosoKey];
+            estado.sospechososInterrogados.push(sospechosoKey);
+            estado.acciones--;
+
+            agregarMensajeHistoria(`🗣️ Interrogaste a ${sospechoso.nombre} (${sospechoso.relacion}): "${sospechoso.dialogo}"`);
+
+            if (sospechoso.pistas) {
+                sospechoso.pistas.forEach(p => {
+                    estado.pistasEncontradas.push({
+                        ...p,
+                        lugar: sospechosoKey,
+                        fuente: sospechoso.nombre
+                    });
+                    if (p.valida) estado.pistasValidas++;
+                    else estado.pistasInvalidas++;
+                });
+            }
+
+            document.querySelector(`[data-sospechoso="${sospechosoKey}"]`)?.classList.add('investigated');
+            actualizarPistasUI();
+            actualizarContadores();
+
+            estado.puntos += 5;
+            actualizarContadores();
+
+            verificarPistasCompletas();
+
+            if (estado.acciones === 0) {
+                mostrarToast("⚠️ No te quedan acciones. Resuelve el caso ahora.");
+            }
+        }
+
+        function actualizarPistasUI() {
+            const container = document.getElementById('pistasLista');
+            if (estado.pistasEncontradas.length === 0) {
+                container.innerHTML = `<span style="color:#64748b; font-size:12px;">Investiga para encontrar pistas...</span>`;
+                return;
+            }
+            let html = '';
+            estado.pistasEncontradas.forEach(p => {
+                const cls = p.valida ? '' : 'falsa';
+                html += `<span class="pista-item ${cls}"><span class="emoji">${p.emoji || '📌'}</span> ${p.texto} ${p.valida ? '✅' : '❌'}</span>`;
+            });
+            container.innerHTML = html;
+        }
+
+        function agregarMensajeHistoria(texto) {
+            const historia = document.getElementById('historia');
+            const p = document.createElement('p');
+            p.style.fontSize = '14px';
+            p.style.borderTop = '1px solid #2d3748';
+            p.style.paddingTop = '8px';
+            p.style.marginTop = '8px';
+            p.textContent = texto;
+            historia.appendChild(p);
+            historia.scrollTop = historia.scrollHeight;
+        }
+
+        function mostrarToast(msg) {
+            const t = document.getElementById('toast');
+            t.textContent = msg;
+            t.classList.add('show');
+            clearTimeout(t._hide);
+            t._hide = setTimeout(() => t.classList.remove('show'), 3000);
+        }
+
+        function verificarPistasCompletas() {
+            const totalValidas = Object.values(CASO.lugares).reduce((acc, l) => acc + l.pistas.filter(p => p.valida).length, 0) +
+                                 Object.values(CASO.sospechosos).reduce((acc, s) => acc + (s.pistas ? s.pistas.filter(p => p.valida).length : 0), 0);
+            if (estado.pistasValidas === totalValidas && totalValidas > 0) {
+                mostrarToast("✅ ¡Has encontrado todas las pistas válidas! Ahora resuelve el caso.");
+            }
+        }
+
+        // ================================================================
+        // RESOLVER
+        // ================================================================
+        function mostrarResolver() {
+            if (estado.juegoTerminado) return;
+            document.getElementById('screenJuego').classList.remove('active');
+            document.getElementById('screenResolver').classList.add('active');
+
+            const container = document.getElementById('opcionesSospechosos');
+            container.innerHTML = '';
+            Object.keys(CASO.sospechosos).forEach(key => {
+                const s = CASO.sospechosos[key];
+                const btn = document.createElement('button');
+                btn.className = 'btn btn-outline';
+                btn.textContent = `${s.nombre} (${s.relacion})`;
+                btn.style.marginBottom = '4px';
+                btn.onclick = () => {
+                    document.querySelectorAll('#opcionesSospechosos .btn').forEach(b => b.style.borderColor = '#2d3748');
+                    btn.style.borderColor = '#facc15';
+                    estado.sospechosoElegido = key;
+                };
+                container.appendChild(btn);
+            });
+        }
+
+        function volverJuego() {
+            document.getElementById('screenResolver').classList.remove('active');
+            document.getElementById('screenJuego').classList.add('active');
+        }
+
+        function resolverCaso() {
+            if (!estado.sospechosoElegido) {
+                mostrarToast("Debes elegir un sospechoso.");
+                return;
+            }
+            const motivo = document.getElementById('motivoInput').value.trim() || "Sin motivo específico";
+            estado.motivo = motivo;
+            estado.juegoTerminado = true;
+            clearInterval(estado.timerInterval);
+
+            const acierto = estado.sospechosoElegido === CASO.responsable;
+            let puntosFinales = estado.puntos;
+            puntosFinales += estado.pistasValidas * 10;
+            puntosFinales -= estado.pistasInvalidas * 5;
+            const tiempoRestante = estado.maxTiempo - estado.tiempo;
+            if (tiempoRestante > 0) puntosFinales += Math.floor(tiempoRestante / 10);
+            if (acierto) puntosFinales += 50;
+            else puntosFinales -= 20;
+            if (puntosFinales < 0) puntosFinales = 0;
+
+            // Guardar en ranking local
+            guardarRanking(puntosFinales, acierto);
+
+            // Mostrar resultado
+            document.getElementById('screenResolver').classList.remove('active');
+            document.getElementById('screenResultado').classList.add('active');
+
+            document.getElementById('resultadoIcono').textContent = acierto ? '🎉' : '😞';
+            document.getElementById('resultadoTitulo').textContent = acierto ? '¡Caso resuelto!' : 'Has fallado.';
+            document.getElementById('resultadoPuntos').textContent = puntosFinales + ' pts';
+            document.getElementById('resultadoDetalle').textContent = acierto ?
+                `El responsable era ${CASO.nombreResponsable}. ¡Excelente investigación!` :
+                `El responsable era ${CASO.nombreResponsable}. Sigue practicando.`;
+            document.getElementById('resultadoExtra').textContent = `Pistas válidas: ${estado.pistasValidas} | Falsas: ${estado.pistasInvalidas} | Tiempo: ${Math.floor(estado.tiempo/60)}m ${estado.tiempo%60}s`;
+
+            mostrarRankingLocal();
+        }
+
+        function terminarJuego(mensaje) {
+            if (estado.juegoTerminado) return;
+            estado.juegoTerminado = true;
+            clearInterval(estado.timerInterval);
+            mostrarToast(mensaje);
+            document.getElementById('screenJuego').classList.remove('active');
+            document.getElementById('screenResultado').classList.add('active');
+            document.getElementById('resultadoIcono').textContent = '⏰';
+            document.getElementById('resultadoTitulo').textContent = 'Tiempo agotado';
+            document.getElementById('resultadoPuntos').textContent = estado.puntos + ' pts';
+            document.getElementById('resultadoDetalle').textContent = 'No lograste resolver el caso a tiempo. ¡Inténtalo de nuevo!';
+            document.getElementById('resultadoExtra').textContent = `Pistas encontradas: ${estado.pistasEncontradas.length}`;
+            mostrarRankingLocal();
+        }
+
+        // ================================================================
+        // RANKING LOCAL (localStorage)
+        // ================================================================
+        function guardarRanking(puntos, acierto) {
+            const ranking = JSON.parse(localStorage.getItem('misterio_ranking') || '[]');
+            const nombre = prompt("Ingresa tu nombre para el ranking:", "Detective") || "Detective";
+            ranking.push({
+                nombre: nombre,
+                puntos: puntos,
+                acierto: acierto,
+                fecha: new Date().toISOString()
+            });
+            ranking.sort((a, b) => b.puntos - a.puntos);
+            if (ranking.length > 20) ranking.length = 20;
+            localStorage.setItem('misterio_ranking', JSON.stringify(ranking));
+        }
+
+        function mostrarRankingLocal() {
+            const container = document.getElementById('rankingLocal');
+            const ranking = JSON.parse(localStorage.getItem('misterio_ranking') || '[]');
+            if (ranking.length === 0) {
+                container.innerHTML = '<div style="color:#64748b; font-size:13px; text-align:center; padding:10px;">Aún no hay puntuaciones. ¡Sé el primero!</div>';
+                return;
+            }
+            let html = `<table class="ranking-table">
+                <thead><tr><th>#</th><th>Detective</th><th>Puntos</th></tr></thead><tbody>`;
+            ranking.forEach((r, i) => {
+                const medal = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : `${i+1}`;
+                html += `<tr><td>${medal}</td><td>${r.nombre}</td><td>${r.puntos}</td></tr>`;
+            });
+            html += `</tbody></table>`;
+            container.innerHTML = html;
+        }
+
+        // ================================================================
+        // COMPARTIR
+        // ================================================================
+        function compartirResultado() {
+            const puntos = document.getElementById('resultadoPuntos').textContent;
+            const detalle = document.getElementById('resultadoDetalle').textContent;
+            const extra = document.getElementById('resultadoExtra').textContent;
+            const texto = `🕵️ ¡He resuelto el Caso #001 de Misterio Diario!\n\n${detalle}\n${extra}\n\n🏆 Puntuación: ${puntos}\n\n¿Puedes superarme? Juega aquí: [TU ENLACE]`;
+            if (navigator.share) {
+                navigator.share({
+                    title: 'Misterio Diario - Caso #001',
+                    text: texto,
+                }).catch(() => {});
+            } else {
+                navigator.clipboard.writeText(texto).then(() => {
+                    mostrarToast("📋 Texto copiado. Pégala en tus redes.");
+                }).catch(() => {
+                    prompt("Copia este texto para compartir:", texto);
+                });
+            }
+        }
+
+        // ================================================================
+        // REINICIAR
+        // ================================================================
+        function reiniciarJuego() {
+            document.getElementById('screenResultado').classList.remove('active');
+            document.getElementById('screenInicio').classList.add('active');
+            document.getElementById('screenJuego').classList.remove('active');
+            document.getElementById('screenResolver').classList.remove('active');
+            if (estado.timerInterval) clearInterval(estado.timerInterval);
+            estado = { ...estado, iniciado: false, tiempo: 0, timerInterval: null, puntos: 0, pistasEncontradas: [], acciones: 8, lugaresInvestigados: [], sospechososInterrogados: [], casoResuelto: false, pistasValidas: 0, pistasInvalidas: 0, sospechosoElegido: null, motivo: "", juegoTerminado: false };
+            document.getElementById('timerDisplay').textContent = '00:00';
+            actualizarContadores();
+        }
+
+        // ================================================================
+        // INICIO
+        // ================================================================
+        actualizarContadores();
+        mostrarRankingLocal();
+    </script>
+</body>
+</html>
